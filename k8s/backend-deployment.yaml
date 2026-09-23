@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopsphere-backend
+  namespace: shopsphere
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopsphere-backend
+  template:
+    metadata:
+      labels:
+        app: shopsphere-backend
+    spec:
+      containers:
+        - name: shopsphere-backend
+          image: shopsphere-backend:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20

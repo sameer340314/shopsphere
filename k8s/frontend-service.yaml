@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopsphere-frontend
+  namespace: shopsphere
+spec:
+  selector:
+    app: shopsphere-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
