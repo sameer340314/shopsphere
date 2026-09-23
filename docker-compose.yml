@@ -1,0 +1,19 @@
+services:
+
+  backend:
+    build:
+      context: ./backend
+    image: shopsphere-backend:v1
+    container_name: shopsphere-backend
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    image: shopsphere-frontend:v1
+    container_name: shopsphere-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
