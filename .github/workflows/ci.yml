@@ -54,3 +54,24 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: npm run build
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build backend Docker image
+        run: |
+          docker build -t shopsphere-backend:ci ./backend
+
+      - name: Build frontend Docker image
+        run: |
+          docker build -t shopsphere-frontend:ci ./frontend
+
+      - name: Verify Docker images
+        run: |
+          docker images shopsphere-backend
+          docker images shopsphere-frontend
