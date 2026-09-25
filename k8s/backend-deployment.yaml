@@ -3,27 +3,37 @@ kind: Deployment
 metadata:
   name: shopsphere-backend
   namespace: shopsphere
+
 spec:
   replicas: 2
+
   selector:
     matchLabels:
       app: shopsphere-backend
+
   template:
     metadata:
       labels:
         app: shopsphere-backend
+
     spec:
       containers:
         - name: shopsphere-backend
           image: shopsphere-backend:v1
           imagePullPolicy: IfNotPresent
+
           ports:
             - containerPort: 8000
+
+          envFrom:
+            - configMapRef:
+                name: shopsphere-config
 
           resources:
             requests:
               cpu: "100m"
               memory: "128Mi"
+
             limits:
               cpu: "500m"
               memory: "512Mi"
