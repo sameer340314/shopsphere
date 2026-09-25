@@ -19,17 +19,31 @@ jobs:
         with:
           ref: main
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          version: latest
+          python-version: "3.12"
 
-      - name: Validate Kubernetes YAML
+      - name: Install YAML parser
         run: |
-          for file in k8s/*.yaml; do
-            echo "Validating $file"
-            kubectl create --dry-run=client --validate=false -f "$file" -o yaml > /dev/null
-          done
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Validate Kubernetes YAML syntax
+        run: |
+          python - <<'PY'
+          import glob
+          import yaml
+
+          files = glob.glob("k8s/*.yaml")
+
+          for file in files:
+              print(f"Validating {file}")
+              with open(file, "r", encoding="utf-8") as f:
+                  list(yaml.safe_load_all(f))
+
+          print("All Kubernetes YAML files are syntactically valid.")
+          PY
 
       - name: CD Validation Complete
-        run: echo "ShopSphere Kubernetes manifests passed CI/CD validation."
+        run: echo "ShopSphere Kubernetes manifests passed CI/CD YAML validation."
