@@ -29,6 +29,9 @@ spec:
             - configMapRef:
                 name: shopsphere-config
 
+            - secretRef:
+                name: shopsphere-secret
+
           resources:
             requests:
               cpu: "100m"
