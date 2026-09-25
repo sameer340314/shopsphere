@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: shopsphere-ingress
+  namespace: shopsphere
+
+spec:
+  ingressClassName: nginx
+
+  rules:
+    - host: shopsphere.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: shopsphere-frontend
+                port:
+                  number: 80
