@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Kubernetes
+    name: Validate Kubernetes Manifests
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
@@ -24,6 +24,12 @@ jobs:
         with:
           version: latest
 
-      - name: Validate Kubernetes manifests
+      - name: Validate Kubernetes YAML
         run: |
-          kubectl apply --dry-run=client --validate=false -f k8s
+          for file in k8s/*.yaml; do
+            echo "Validating $file"
+            kubectl create --dry-run=client --validate=false -f "$file" -o yaml > /dev/null
+          done
+
+      - name: CD Validation Complete
+        run: echo "ShopSphere Kubernetes manifests passed CI/CD validation."
