@@ -56,22 +56,39 @@ jobs:
         run: npm run build
 
   docker-build:
-    name: Docker Build
+    name: Docker Build and Push
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build backend Docker image
         run: |
-          docker build -t shopsphere-backend:ci ./backend
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-backend:latest \
+            ./backend
 
       - name: Build frontend Docker image
         run: |
-          docker build -t shopsphere-frontend:ci ./frontend
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-frontend:latest \
+            ./frontend
+
+      - name: Push backend Docker image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-backend:latest
+
+      - name: Push frontend Docker image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-frontend:latest
 
       - name: Verify Docker images
         run: |
-          docker images shopsphere-backend
-          docker images shopsphere-frontend
+          docker images
