@@ -69,25 +69,34 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Set image tag
+        id: image-tag
+        run: |
+          echo "TAG=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Build backend Docker image
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-backend:latest \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-backend:${{ steps.image-tag.outputs.TAG }} \
             ./backend
 
       - name: Build frontend Docker image
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-frontend:latest \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-frontend:${{ steps.image-tag.outputs.TAG }} \
             ./frontend
 
-      - name: Push backend Docker image
+      - name: Push backend Docker images
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-backend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-backend:${{ steps.image-tag.outputs.TAG }}
 
-      - name: Push frontend Docker image
+      - name: Push frontend Docker images
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/shopsphere-frontend:${{ steps.image-tag.outputs.TAG }}
 
       - name: Verify Docker images
         run: |
