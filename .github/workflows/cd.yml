@@ -9,15 +9,31 @@ on:
 
 jobs:
   deploy:
-    name: Validate Kubernetes Manifests
+    name: Validate Release and Kubernetes Manifests
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout exact CI commit
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set release image tag
+        id: release-tag
+        run: |
+          FULL_SHA="${{ github.event.workflow_run.head_sha }}"
+          TAG="${FULL_SHA:0:7}"
+          echo "TAG=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Release image tag: $TAG"
+
+      - name: Verify backend release image
+        run: |
+          docker pull sameer340314/shopsphere-backend:${{ steps.release-tag.outputs.TAG }}
+
+      - name: Verify frontend release image
+        run: |
+          docker pull sameer340314/shopsphere-frontend:${{ steps.release-tag.outputs.TAG }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -45,5 +61,7 @@ jobs:
           print("All Kubernetes YAML files are syntactically valid.")
           PY
 
-      - name: CD Validation Complete
-        run: echo "ShopSphere Kubernetes manifests passed CI/CD YAML validation."
+      - name: CD Release Validation Complete
+        run: |
+          echo "ShopSphere release validation completed successfully."
+          echo "Release image tag: ${{ steps.release-tag.outputs.TAG }}"
