@@ -3,51 +3,46 @@ kind: Deployment
 metadata:
   name: shopsphere-backend
   namespace: shopsphere
-
 spec:
   replicas: 2
-
   selector:
     matchLabels:
       app: shopsphere-backend
-
   template:
     metadata:
       labels:
         app: shopsphere-backend
-
     spec:
       containers:
         - name: shopsphere-backend
-          image: shopsphere-backend:v1
-          imagePullPolicy: IfNotPresent
-
+          image: sameer340314/shopsphere-backend:latest
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8000
-
           envFrom:
             - configMapRef:
                 name: shopsphere-config
-
             - secretRef:
                 name: shopsphere-secret
-
           resources:
             requests:
               cpu: "100m"
               memory: "128Mi"
-
             limits:
               cpu: "500m"
               memory: "512Mi"
-
           readinessProbe:
             httpGet:
               path: /
               port: 8000
             initialDelaySeconds: 5
             periodSeconds: 10
-
           livenessProbe:
             httpGet:
               path: /
