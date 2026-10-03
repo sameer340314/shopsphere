@@ -16,6 +16,8 @@ spec:
         app: shopsphere-frontend
 
     spec:
+      automountServiceAccountToken: false
+
       securityContext:
         seccompProfile:
           type: RuntimeDefault
