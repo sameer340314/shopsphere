@@ -5,44 +5,62 @@ metadata:
   namespace: shopsphere
 spec:
   replicas: 2
+
   selector:
     matchLabels:
       app: shopsphere-backend
+
   template:
     metadata:
       labels:
         app: shopsphere-backend
+
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: shopsphere-backend
-          image: sameer340314/shopsphere-backend:latest
+
+          image: sameer340314/shopsphere-backend:d83275c
+
           imagePullPolicy: Always
+
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
             allowPrivilegeEscalation: false
             privileged: false
             capabilities:
               drop:
                 - ALL
+
           ports:
             - containerPort: 8000
+
           envFrom:
             - configMapRef:
                 name: shopsphere-config
             - secretRef:
                 name: shopsphere-secret
+
           resources:
             requests:
               cpu: "100m"
               memory: "128Mi"
+
             limits:
               cpu: "500m"
               memory: "512Mi"
+
           readinessProbe:
             httpGet:
               path: /
               port: 8000
             initialDelaySeconds: 5
             periodSeconds: 10
+
           livenessProbe:
             httpGet:
               path: /
