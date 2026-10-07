@@ -22,6 +22,11 @@ spec:
         seccompProfile:
           type: RuntimeDefault
 
+      volumes:
+        - name: backend-db
+          persistentVolumeClaim:
+            claimName: shopsphere-backend-db
+
       containers:
         - name: shopsphere-backend
 
@@ -40,6 +45,11 @@ spec:
 
           ports:
             - containerPort: 8000
+
+          volumeMounts:
+            - name: backend-db
+              mountPath: /app/shopsphere.db
+              subPath: shopsphere.db
 
           envFrom:
             - configMapRef:
