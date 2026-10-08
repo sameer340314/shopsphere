@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import SessionLocal, Base, engine
 from models import Product
 from schemas import ProductCreate, ProductResponse
 import math
@@ -13,13 +12,15 @@ app = FastAPI(
     version="1.0.0"
 )
 
+Base.metadata.create_all(bind=engine)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://shopsphere-frontend-0apb.onrender.com",
-],
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://shopsphere-frontend-0apb.onrender.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
