@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://shopsphere-mz4a.onrender.com";
 
 const RISK_API =
   "/products/inventory-dashboard-risk-ranking-distribution-action-plan-ranking-details-summary-report-ranking-details";
