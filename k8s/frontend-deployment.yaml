@@ -25,7 +25,7 @@ spec:
       containers:
         - name: shopsphere-frontend
 
-          image: sameer340314/shopsphere-frontend:d83275c
+          image: sameer340314/shopsphere-frontend:api-url-fix-20261012
 
           imagePullPolicy: Always
 
